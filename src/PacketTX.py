@@ -73,37 +73,6 @@ class PacketTX(object):
         logging.debug("Staging packet: %s" % packet)
         self.staged_packet = packet
 
-    def transmit_gps_telemetry(self, gps_data):
-        # Construct the packet
-        try:
-            gps_packet = struct.pack(">BHIBffffffBBBffHffff",
-                1,  # Packet ID for the GPS Telemetry Packet.
-                gps_data['week'],
-                int(gps_data['iTOW']*1000), # Convert the GPS week value to milliseconds, and cast to an int.
-                gps_data['leapS'],
-                gps_data['latitude'],
-                gps_data['longitude'],
-                gps_data['altitude'],
-                gps_data['ground_speed'],
-                gps_data['heading'],
-                gps_data['ascent_rate'],
-                gps_data['numSV'],
-                gps_data['gpsFix'],
-                gps_data['dynamic_model'],
-                # New fields 2024-09
-                _radio_temp,
-                _cpu_temp,
-                int(_cpu_speed),
-                _load_avg_1,
-                _load_avg_5,
-                _load_avg_15,
-                _disk_percent
-                )
-
-            self.queue_telemetry_packet(gps_packet)
-        except:
-            traceback.print_exc()
-
 
 if __name__ == "__main__":
     """ Test script, which transmits a null packet repeatedly. """
