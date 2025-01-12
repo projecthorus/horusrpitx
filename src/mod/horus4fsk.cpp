@@ -152,7 +152,6 @@ int main(int argc, char **argv)
 		exit(0);
 	}
 
-    std::cout << "argc " << argc << std::endl;
     std::cout << "Starting transmission on " << frequency << std::endl;
 
 	for (int i = 0; i < 64; i++) {

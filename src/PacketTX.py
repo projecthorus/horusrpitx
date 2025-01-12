@@ -15,9 +15,11 @@ import horusdemodlib.encoder
 class PacketTX(object):
     def __init__(self,
         frequency = 434.200,
+        autorestart=20,
         log_file = None):
 
         self.frequency = int(frequency * 1e6)
+        self.autorestart_count = autorestart
 
         if log_file != None:
             self.log_file = open(log_file,'a')
@@ -32,39 +34,50 @@ class PacketTX(object):
         self.transmit_active = True
         txthread = Thread(target=self.tx_thread)
         txthread.start()
-    
+
     def tx_thread(self):
-        # Open transmitter process
-        p = subprocess.Popen(['/usr/bin/sudo', '/home/pi/horusrpitx/src/mod/horus4fsk', f'{self.frequency}'], 
-                                text=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-
-        os.set_blocking(p.stdout.fileno(), False)
-        
-        # Iterate through init stdout
-        while True:
-            sleep(1)
-            line = p.stdout.readline()
-            if line:
-                logging.debug("RPiTX: %s" % line.rstrip())
-            else:
-                break
-
         while self.transmit_active:
-            if self.staged_packet:
-                logging.debug("Writing packet to stdin: %s" % self.staged_packet)
-                p.stdin.write(f"{self.staged_packet}\n\n")
-                p.stdin.flush()
-                while True:
-                    line = p.stdout.readline()
-                    if line:
-                        logging.debug("RPiTX: %s" % line.rstrip())
-                        break
-                self.staged_packet = None
-            else:
-                sleep(0.1)
+            # Open transmitter process
+            cwd = os.getcwd()
+            p = subprocess.Popen([os.path.join(cwd, 'mod/horus4fsk'), f'{self.frequency}'],
+                                    text=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 
-        # Close popen_thread -- send SIGINT
-        p.terminate()
+            os.set_blocking(p.stdout.fileno(), False)
+
+            # Iterate through init stdout
+            while True:
+                sleep(0.1)
+                line = p.stdout.readline()
+                if line:
+                    logging.debug("RPiTX: %s" % line.rstrip())
+                else:
+                    break
+
+            continuous_tx = True
+            packet_count = 0
+
+            while self.transmit_active and continuous_tx:
+                if self.staged_packet:
+                    logging.debug("Writing packet to stdin: %s" % self.staged_packet)
+                    p.stdin.write(f"{self.staged_packet}\n\n")
+                    p.stdin.flush()
+                    while True:
+                        line = p.stdout.readline()
+                        if line:
+                            logging.debug("RPiTX: %s" % line.rstrip())
+                            break
+                    self.staged_packet = None
+                    packet_count += 1
+                    if packet_count == self.autorestart_count:
+                        continuous_tx = False
+                else:
+                    sleep(0.1)
+
+            # Close popen_thread -- send SIGINT
+            logging.debug("Closing RPiTX")
+            p.terminate()
+
+            sleep(0.5)
 
     def close(self):
         self.transmit_active = False
@@ -85,6 +98,7 @@ if __name__ == "__main__":
     parser.add_argument("--lon", default=0, type=float, help="Longitude in Degrees. (Default: 0.0)")
     parser.add_argument("--alt", default=0, type=float, help="Altitude in Meters. (Default: 0)")
     parser.add_argument("--sats", default=3, type=int, help="GPS Satellites visible. (Default: 3)")
+    parser.add_argument("--autorestart", default=20, type=int, help="Number of packets to transmit continuously before restarting TX process. (Default: 20)")
     parser.add_argument("-v", "--verbose", action='store_true', default=False, help="Show additional debug info.")
     args = parser.parse_args()
 
@@ -99,7 +113,8 @@ if __name__ == "__main__":
     e = horusdemodlib.encoder.Encoder()
 
     tx = PacketTX(
-        frequency=args.frequency)
+        frequency=args.frequency,
+        autorestart=args.autorestart)
     tx.start_tx()
 
     seq = 0
@@ -119,7 +134,7 @@ if __name__ == "__main__":
             )
             tx.stage_packet(codecs.encode(packet, 'hex').decode().upper())
             seq += 1
-            sleep(5)
+            sleep(4)
 
     except KeyboardInterrupt:
         tx.close()
