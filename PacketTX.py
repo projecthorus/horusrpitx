@@ -1,3 +1,12 @@
+#!/usr/bin/env python
+#
+#	Raspberry Pi Horus Binary v2 Transmitter Script. Interfaces to horus4fsk binary. 
+#
+#	Copyright (C) 2024  Andrew Koenig <ke5gdb@gmail.com>
+#						Mark Jessop <vk5qi@rfhead.net>
+#	Released under GNU GPL v3 or later
+#
+
 import serial
 import sys
 import os

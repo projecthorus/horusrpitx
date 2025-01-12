@@ -134,7 +134,7 @@ void TransmitStream(std::string packet)
 static void terminate(int num)
 {
     running=false;
-	fprintf(stderr,"Caught signal - Terminating %x\n",num);
+	// fprintf(stderr,"Caught signal - Terminating %x\n",num);
 }
 
 int main(int argc, char **argv)
