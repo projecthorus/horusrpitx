@@ -38,6 +38,7 @@ git clone https://github.com/F5OEO/librpitx.git
 cd librpitx/src/
 make
 sudo make install
+cd ~
 ```
 
 Install [horusdemodlib](https://github.com/projecthorus/horusdemodlib) with the following commands. The build process is to install `libhorus.so`. Further down in these instructions we will use `pip` to install the complemetary Python library to encode packets. Both are needed. 
@@ -49,18 +50,19 @@ cmake ..
 make
 sudo make install
 sudo ldconfig
+cd ~
 ```
 
 Build horusrpitx:
 
 ```console
 git clone https://github.com/projecthorus/horusrpitx.git
-cd src
 python -m venv venv
 . venv/bin/activate
 pip install -r requirements.txt
 cd mod
 make
+cd ..
 ```
 
 ## Transmitting Sample Packets
@@ -70,7 +72,6 @@ In some cases it may be useful to generate sample packets to test a receiver and
 All of the arguments shown below are optional. They are shown with their default values. 
 
 ```console
-cd ~/horusrpitx/src
 sudo venv/bin/python PacketTX.py --frequency 434.2 --id 256 --lat 0 --lon 0 --alt 0 --sats 3 --verbose
 ```
 NOTE: `sudo` is required for RPiTX to function. 
@@ -80,6 +81,5 @@ NOTE: `sudo` is required for RPiTX to function.
 To transmit position packets, a U-Blox GPS is required. When connected via USB, the default UART for the U-Blox GPS is `/dev/ttyACM0`. 
 
 ```console
-cd ~/horusrpitx/src
-sudo venv/bin/python tx_gps.py 256 --freq 434.2
+sudo venv/bin/python tx_gps.py 256 --frequency 434.2 --gps /dev/ttyACM0
 ```
