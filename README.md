@@ -87,7 +87,7 @@ sudo venv/bin/python tx_gps.py 256 --frequency 434.2 --gps /dev/ttyACM0
 
 ## Enable Transmit on Boot
 
-Enabling the horusrpitx transmitter on boot can be accomplished with a systemd unit file. Use these commands to copy the sample systemd unit file to the proper directory. Be sure to update the environment variables as needed.
+Enabling the horusrpitx transmitter on boot can be accomplished with a systemd unit file. Use these commands to copy the sample systemd unit file to the proper directory. Be sure to update the environment variables for your intended payload ID and transmit frequency.
 
 ```console
 sudo cp tx_horus.service /etc/systemd/system/
