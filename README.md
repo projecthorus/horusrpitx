@@ -6,7 +6,7 @@ Transmit Horus Binary v2 using the GPCLK function of the Raspberry Pi. This has 
 
 The Raspberry Pi Broadcom-based SoC can generate clock signals from near 0 Hz through a large portion of the UHF spectrum. By modulating this clock signal with [librpitx](https://github.com/F5OEO/librpitx), it is possible to transmit Horus Binary v2 using a GPIO pin on a Raspberry Pi. 
 
-The clock signal generated is a sqaure wave, so moderate filtering should be used before routing the signal to an antenna.
+The clock signal generated is a square wave, so moderate filtering should be used before routing the signal to an antenna.
 
 ## Supported Hardware
 
@@ -28,7 +28,7 @@ Install required libraries and utilities via `apt`:
 
 ```console
 sudo apt update
-sudo apt install --no-install-recommends git libraspberrypi-dev python3-venv python3-pip
+sudo apt install --no-install-recommends git libraspberrypi-dev python3-venv python3-pip cmake
 ```
 
 Install [librpitx](https://github.com/F5OEO/librpitx) with the following commands: 
@@ -57,6 +57,7 @@ Build horusrpitx:
 
 ```console
 git clone https://github.com/projecthorus/horusrpitx.git
+cd horusrpitx
 python -m venv venv
 . venv/bin/activate
 pip install -r requirements.txt
