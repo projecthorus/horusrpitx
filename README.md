@@ -84,3 +84,15 @@ To transmit position packets, a U-Blox GPS is required. When connected via USB, 
 ```console
 sudo venv/bin/python tx_gps.py 256 --frequency 434.2 --gps /dev/ttyACM0
 ```
+
+## Enable Transmit on Boot
+
+Enabling the horusrpitx transmitter on boot can be accomplished with a systemd unit file. Use these commands to copy the sample systemd unit file to the proper directory. Be sure to update the environment variables as needed.
+
+```console
+sudo cp tx_horus.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now tx_horus.service
+```
+
+If you need to update the variables in the systemd unit file, be sure to run `sudo systemctl daemon-reload` to commit the updated unit file.

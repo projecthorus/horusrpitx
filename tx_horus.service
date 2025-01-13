@@ -1,0 +1,22 @@
+[Unit]
+Description=Horus Binary v2 Transmitter
+After=basic.target
+
+[Service]
+# Update these lines for your Horus v2 ID and frequency
+Environment=HORUS_ID=256
+Environment=HORUS_FREQ=434.200
+
+# Update this path if the horusrpitx files are not in the pi user's home directory!
+WorkingDirectory=/home/pi/horusrpitx
+ExecStart=/home/pi/horusrpitx/venv/bin/python tx_gps.py ${HORUS_ID} --frequency ${HORUS_FREQ}
+
+Restart=always
+RestartSec=10
+
+# NOTE - horusrpitx needs to be run as root for access to the /dev/mem device (RPiTX)
+#User=pi
+SyslogIdentifier=horus_tx
+
+[Install]
+WantedBy=multi-user.target
