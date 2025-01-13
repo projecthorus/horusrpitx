@@ -6,10 +6,11 @@ After=basic.target
 # Update these lines for your Horus v2 ID and frequency
 Environment=HORUS_ID=256
 Environment=HORUS_FREQ=434.200
+Environment=HORUS_GPS=/dev/ttyACM0
 
 # Update this path if the horusrpitx files are not in the pi user's home directory!
 WorkingDirectory=/home/pi/horusrpitx
-ExecStart=/home/pi/horusrpitx/venv/bin/python tx_gps.py ${HORUS_ID} --frequency ${HORUS_FREQ}
+ExecStart=/home/pi/horusrpitx/venv/bin/python tx_gps.py ${HORUS_ID} --frequency ${HORUS_FREQ} --gps ${HORUS_GPS}
 
 Restart=always
 RestartSec=10
