@@ -57,6 +57,7 @@ Build horusrpitx:
 
 ```console
 git clone https://github.com/projecthorus/horusrpitx.git
+cd horusrpitx
 python -m venv venv
 . venv/bin/activate
 pip install -r requirements.txt
