@@ -11,6 +11,7 @@ import argparse
 import logging
 import time
 import os
+import sys
 import datetime
 import subprocess
 import traceback
@@ -120,6 +121,10 @@ encoder = horusdemodlib.encoder.Encoder()
 # Main 'loop'.
 try:
 	while True:
+		# Get temperature
+		data = subprocess.check_output("/usr/bin/vcgencmd measure_temp", shell=True)
+		temperature = data.decode().split('=')[1].split('\'')[0]
+
 		# Create Horus Binary Packet, send to tx thread
 		if not tx.staged_packet and gps_data:
 			packet = encoder.create_horus_v2_packet(
@@ -131,7 +136,9 @@ try:
 				altitude=gps_data['altitude'],
 				speed=gps_data['ground_speed'],
 				satellites=gps_data['numSV'],
-				time_dt=datetime.datetime.utcnow()
+				temperature=float(temperature),
+				time_dt=datetime.datetime.utcnow(),
+				# custom_data = b'\x05\x00\xe1\x00#\xd2\x03\x00\x00'
 			)
 
 			tx.stage_packet(codecs.encode(packet, 'hex').decode().upper())
